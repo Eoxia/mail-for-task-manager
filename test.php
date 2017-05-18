@@ -33,11 +33,16 @@ class Mail_Link_For_Wpshop {
 	 * @return void
 	 */
 	public function wpb_adding_scripts() {
-		wp_enqueue_script(
+		wp_register_script(
 			'form-mail', // name your script so that you can attach other scripts and de-register, etc.
 			__DIR__ . '/ajax_task_call.js', // this is the location of your script file.
 			array( 'jquery' ) // this array lists the scripts upon which your script depends.
 		);
+		$translation_array = array(
+			'text_confirm_popup' => __( 'êtes-vous sure de vouloir créer la tache ? Toute pièce(s) jointe(s) non télécharger sera perdu.', 'mail-for-task-manager' ),
+		);
+		wp_localize_script( 'form-mail', 'MailForTaskManager', $translation_array );
+		wp_enqueue_script( 'form-mail' );
 	}
 	/**
 	 * Enregistre et ajoute tout les champs definie plus bas dans parametres->Ecriture.
