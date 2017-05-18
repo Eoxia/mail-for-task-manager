@@ -9,12 +9,11 @@ function createTask( idMail, idDiv ) {
 	var mailId = idMail;
 	var divId = idDiv;
 	var managementMail = 'create_task';
-	var comment = mailComment; // Pour l'instant clientMail et mailContent et mailComment et Attachs ne sont pas utilisé. En attentes de directives.
 	if ( confirm( MailForTaskManager.text_confirm_popup ) ) {
 		jQuery.ajax({
 			url: '', // Le nom du fichier indiqué dans le formulaire
 			type: 'POST', // La méthode indiquée dans le formulaire (get ou post)
-			data: 'mail_id=' + mailId + '&management_mail=' + managementMail + '&mail_div=' + divId + '&attachment=' + attachment + '&comment=' + comment, // Je sérialise les données (j'envoie toutes les valeurs présentes dans le formulaire)
+			data: 'mail_id=' + mailId + '&management_mail=' + managementMail + '&mail_div=' + divId, // Je sérialise les données (j'envoie toutes les valeurs présentes dans le formulaire)
 			success: function( data ) { // Je récupère la réponse du fichier PHP
 				var task = JSON.parse( data );
 				alert( task.tache );
