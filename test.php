@@ -13,6 +13,7 @@
  * @method __construct
  */
 class Mail_Link_For_Wpshop {
+
 	/**
 	 * Initialise les notices admin pour activer l'adresse qui est ajouter le champ dans profile utilisateur, puis est relié a task manager pour pouvoir créer et supprimer des evenement sur l'agenda google.
 	 *
@@ -27,6 +28,7 @@ class Mail_Link_For_Wpshop {
 		add_action( 'admin_init' , array( &$this, 'callback_ask_task' ) );
 		add_action( 'admin_menu', array( &$this, 'add_admin_menu' ) );
 	}
+
 	/**
 	 * Ajoute le script qui contient toute les fonctions que j'ai codé en javascript et lui donne le nom 'form-mail'.
 	 *
@@ -44,6 +46,7 @@ class Mail_Link_For_Wpshop {
 		wp_localize_script( 'form-mail', 'MailForTaskManager', $translation_array );
 		wp_enqueue_script( 'form-mail' );
 	}
+
 	/**
 	 * Enregistre et ajoute tout les champs definie plus bas dans parametres->Ecriture.
 	 *
@@ -57,6 +60,7 @@ class Mail_Link_For_Wpshop {
 		add_settings_field( 'task_mail', '<label for="task_mail">' . __( 'Task mail' , 'task_mail' ) . '</label>' , array( &$this, 'add_setting_task_mail' ) , 'writing' );
 		add_settings_field( 'task_pass', '<label for="task_pass">' . __( 'Task password' , 'task_pass' ) . '</label>' , array( &$this, 'add_setting_task_pass' ) , 'writing' );
 	}
+
 	/**
 	 * Enqueue tout les scripts pour pouvoir utiliser jquery dans les fonctions javascript.
 	 *
@@ -68,6 +72,7 @@ class Mail_Link_For_Wpshop {
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_media();
 	}
+
 	/**
 	 * Ajoute le champ d'avertissement dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
@@ -76,6 +81,7 @@ class Mail_Link_For_Wpshop {
 		<p> Before using this service make sure that you have imap enabled on your e-mail settings.<br>As of right now this service only work for gmail accounts. </p>
 		<?php
 	}
+
 	/**
 	 * Ajoute le champ e-mail dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
@@ -85,6 +91,7 @@ class Mail_Link_For_Wpshop {
 		<input type="text" name="task_mail" id="task_mail" value="<?php if ( isset( $task_mail ) ) { echo esc_attr( $task_mail ); } ?>" class="regular-text" />
 		<?php
 	}
+
 	/**
 	 * Ajoute le champ mot de passe dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
@@ -94,13 +101,15 @@ class Mail_Link_For_Wpshop {
 		<input type="password" name="task_pass" id="task_pass" value="<?php if ( isset( $task_pass ) ) { echo esc_attr( $task_pass ); } ?>" class="regular-text" />
 		<?php
 	}
+
 	/**
 	 * Met a jour l'email et le mot de passe à utiliser pour Mail_for_task_manager pour le site.
 	 *
 	 * @return void
 	 */
 	public function update_setting_task_field() {
-		$current_user = wp_get_current_user();
+		wp_verify_nonce( $_POST['task_mail'] );
+		wp_verify_nonce( $_POST['task_pass'] );
 		if ( isset( $_POST['task_mail'] ) && ! empty( $_POST['task_mail'] ) ) {
 			update_option( 'task_mail', sanitize_text_field( $_POST['task_mail'] ) );
 		}
@@ -128,7 +137,7 @@ class Mail_Link_For_Wpshop {
 			$num_mails = imap_num_msg( $imap );
 			for ( $i = 1 ; $i <= $num_mails ; $i++ ) {
 				$header = imap_header( $imap, $i );
-				if ( 'U' === $header->Unseen ) { // WPC.
+				if ( 'U' === $header->Unseen ) { // WPCS: XSS ok.
 					$from_info = $header->from[0];
 					$reply_info = $header->reply_to[0];
 					$client_name = $from_info->personal;
@@ -166,6 +175,7 @@ class Mail_Link_For_Wpshop {
 		include( 'imapcall.php' );
 		$array_task = array();
 		$task_man_test = \task_manager\Task_Comment_Class::g()->get_schema();
+		wp_verify_nonce( $_POST['mail_id'] );
 		$mail_uid = $_POST['mail_id'];
 		$mail_id = imap_msgno( $imap, $mail_uid );
 		$task_mail = array();
