@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Mail link Task wp-shop
  * Description: Add your tasks automatically on wp-shop
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: Bactery
  * License: GPL2
  */
@@ -18,6 +18,7 @@
  */
 class Mail_Link_For_Wpshop {
 
+
 	/**
 	 * Initialise les notices admin pour activer l'adresse qui est ajouter le champ dans profile utilisateur, puis est relié a task manager pour pouvoir créer et supprimer des evenement sur l'agenda google.
 	 *
@@ -29,14 +30,14 @@ class Mail_Link_For_Wpshop {
 		add_action( 'admin_enqueue_scripts', array( $this, 'wpb_adding_scripts' ) );
 		add_action( 'admin_init' , array( &$this, 'register_fields' ) );
 		add_action( 'wp_ajax_ask_task_mail' , array( &$this, 'callback_ask_task' ) );
+		add_action( 'wp_ajax_download_mail_attachs' , array( &$this, 'download_attachments' ) );
 		add_action( 'admin_menu', array( &$this, 'add_admin_menu' ) );
 	}
-
-	/**
-	 * Ajoute le script qui contient toute les fonctions que j'ai codé en javascript et lui donne le nom 'form-mail'.
-	 *
-	 * @return void
-	 */
+		/**
+		 * Ajoute le script qui contient toute les fonctions que j'ai codé en javascript et lui donne le nom 'form-mail'.
+		 *
+		 * @return void
+		 */
 	public function wpb_adding_scripts() {
 		wp_register_script(
 			'form-mail', // nom du script que l'on enregistre.
@@ -89,7 +90,7 @@ class Mail_Link_For_Wpshop {
 	 * Ajoute le champ d'avertissement dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
 	public function add_setting_using_task_mail() {
-		esc_html_e( 'Avant d\'utiliser ce service, soyez sure que l\'e-mail que vous allez utiliser est activé en imap. Ce service ne marche que pour les boite Gmail.' , 'using_task_mail' );
+		esc_html_e( 'Avant d\'utiliser ce service, soyez sure que l\'e-mail que vous allez utiliser est activé en imap. Ce service ne marche que pour les boite Gmail.' , 'using_task_mail' ); // Message pour le champ de 'Génération de tache par email.
 	}
 
 	/**
@@ -116,8 +117,8 @@ class Mail_Link_For_Wpshop {
 	 * @param array $settings un tableau qui contient les variable task_mail et task_pass.
 	 * @return array $settings un tableau qui contient les variable task_mail et task_pass.
 	 */
-	public function update_setting_task_field( $settings ) { // récupere le tableau de email et mot de passe, les sanitize puis les renvoie.
-
+	public function update_setting_task_field( $settings ) {
+		// Récupere le tableau de email et mot de passe, les sanitize puis les renvoie.
 		if ( ! empty( $settings['task_mail'] ) ) {
 			$settings['task_mail'] = sanitize_text_field( $settings['task_mail'] );
 		}
@@ -127,6 +128,7 @@ class Mail_Link_For_Wpshop {
 
 		return $settings;
 	}
+
 	/**
 	 * Ajoute un champ dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
@@ -138,8 +140,8 @@ class Mail_Link_For_Wpshop {
 	 *
 	 * @return void nothing.
 	 */
-	public function mail_to_task_html() { // A changer.
-		require( 'imapcall.php' ); // Appel à la connection à la boite e-mail. retourne $imap.
+	public function mail_to_task_html() {
+			require( 'imapcall.php' ); // Appel à la connection à la boite e-mail. retourne $imap.
 		if ( $imap ) {
 			$num_mails = imap_num_msg( $imap ); // nombre de message dans la boite
 			for ( $i = 1 ; $i <= $num_mails ; $i++ ) { // boucle qui lit tout les messages
@@ -149,7 +151,7 @@ class Mail_Link_For_Wpshop {
 					$client_name = $from_info->personal; // le nom du client
 					$client_mail = $from_info->mailbox . '@' . $from_info->host; // son email.
 					$mail_title = $header->subject;
-					$mail_test = _get_body_attach( $imap, $i ); // retourne $mail_test['attachment'] & $mail_test['body'].
+					$mail_test = _get_body_attach( $imap, $i ); // Retourne $mail_test['attachment'] & $mail_test['body'].
 					if ( ! empty( $mail_test['attachment'] ) ) { // Si l'email possède une pièce jointe.
 						$attachs = 1;
 					} else {
@@ -160,7 +162,9 @@ class Mail_Link_For_Wpshop {
 					$search = '/(<img[^>]+>)/';
 					$replace = '';
 					$body_text = preg_replace( $search, $replace, $body_text, -1, $count ); // compte combien d'images sont dans le corps.
-					$mail_uid = imap_uid( $imap, $i ); // récupere l'uid du mail qui est unique par boite mail seuilent pour pouvoir traiter le bon mail même si des mails sont supprimer entre temps.
+					$mail_uid = imap_uid( $imap, $i ); // récupere l'uid du mail qui est unique.
+					$mail_title_sanitize = sanitize_text_field( $mail_title );
+					$mail_title_sanitize = str_replace( ' ', '_', $mail_title_sanitize );
 					if ( strlen( $body_text ) < 5000 ) {
 						require( 'view/mail-box.php' );
 					} else {
@@ -170,13 +174,14 @@ class Mail_Link_For_Wpshop {
 			}
 		}
 	}
+
 		/**
 		 *  Crée la tache et detruit l'email ou ne crée pas la tache et marque l'email comme lu
 		 *
 		 * @return void tableau task_mail qui contient si la tache et créer ainsi que l'id de la div pour pouvoir la supprimer.
 		 */
 	public function callback_ask_task() {
-		// voir la fonction mail_to_task_htm pour commentaire plus détaillé.
+		// Voir la fonction mail_to_task_htm pour commentaire plus détaillé.
 		if ( isset( $_POST['mail_id'] ) ) {
 			require( 'imapcall.php' );
 			$array_task = array();
@@ -200,11 +205,11 @@ class Mail_Link_For_Wpshop {
 				if ( empty( $user_id ) ) { // si le client n'existe pas, il le crée.
 					$random_pw = wp_generate_password( 10, false );
 					$userdata = array(
-						'user_login'  => $client_name,
-						'user_nicename' => $client_name,
-						'user_email' => $client_mail,
-						'user_pass' => $random_pw,
-						'role' => 'Client',
+					'user_login'  => $client_name,
+					'user_nicename' => $client_name,
+					'user_email' => $client_mail,
+					'user_pass' => $random_pw,
+					'role' => 'Client',
 					);
 					$user_id = wp_insert_user( $userdata );
 				}
@@ -213,41 +218,154 @@ class Mail_Link_For_Wpshop {
 				if ( 0 === count( $list_task ) ) { // si la tache n'existe pas, il l'a crée.
 					$task = \task_manager\Task_Class::g()->update(
 						array(
-							'title' => __( 'Ask', 'task-manager' ),
-							'slug' => 'ask-task-' . $user_id,
-							'parent_id' => \wps_customer_ctr::get_customer_id_by_author_id( $user_id ),
-							)
+						'title' => __( 'Ask', 'task-manager' ),
+						'slug' => 'ask-task-' . $user_id,
+						'parent_id' => \wps_customer_ctr::get_customer_id_by_author_id( $user_id ),
+						)
 					);
 					$task_id = $task->id;
 				} else {
 					$task_id = $list_task[0]->ID;
 				}
 				$task = \task_manager\Task_Class::g()->get( array(
-					'include' => array( $task_id ),
+								'include' => array( $task_id ),
 				), true );
 				$_POST['point']['author_id'] = $user_id;
 				$_POST['point']['status'] = '-34070';
 				$_POST['point']['date'] = current_time( 'mysql' );
 				$_POST['point']['content'] = $body_text;
 				$_POST['point']['post_id'] = $task_id;
-				$point = \task_manager\Point_Class::g()->update( $_POST['point'] );  // rajoute le point dans la tache.
+				$point = \task_manager\Point_Class::g()->update( $_POST['point'] );
 				$task->task_info['order_point_id'][] = (int) $point->id;
 				\task_manager\Task_Class::g()->update( $task );
+				// Ajoute un commentaire si le champ commentaire est rempli.
+				if ( isset( $_POST['comment'] ) && ! empty( $_POST['comment'] ) ) {
+					$array_task['parent_id'] = $point->id;
+					$array_task['post_id'] = $task_id;
+					$array_task['author_id'] = get_current_user_id();
+					$array_task['content'] = sanitize_text_field( $_POST['comment'] );
+					// SI il y a un attachement, rajoute du contenu sur le commentaire pour avertir.
+					if ( 1 === $_POST['attachment'] ) {
+						$array_task['content'] .= ' Les fichiers attachés ont été téléchargé, vous pourrez les trouver dans le dossier du client.';
+					}
+					$comment = \task_manager\Task_Comment_Class::g()->create( $array_task );
+				}
 				imap_delete( $imap, $mail_id );
 				$task_mail['tache'] = 'tache créée.';
-				echo wp_json_encode( $task_mail ); // renvoie ['tache'] et ['mail_id'].
+				echo wp_json_encode( $task_mail );
 				exit();
-					// crée la tache et supprime l'e-mail.
-			} elseif ( 'leave-be' === $_POST['management_mail'] ) {
-				$status = imap_setflag_full( $imap, $mail_id, '\\Seen' ); // Marque l'email comme lu.
+				// create task and delete e-mail.
+			} elseif ( 'leave_be' === $_POST['management_mail'] ) {
+				$status = imap_setflag_full( $imap, $mail_id, '\\Seen' );
 				$task_mail['tache'] = 'tache pas créée.';
-				echo wp_json_encode( $task_mail );  // renvoie ['tache'] et ['mail_id'].
+				echo wp_json_encode( $task_mail );
 				exit();
-				// Marque l'email comme lu et ne crée pas la tache.
+				// Mark mail as seen and leave it be.
 			} // End if().
+		} // End if().
+	}
+
+	/**
+	 * Télécharge les attachement sur le serveur, les mets dans un fichier zip puis les télécharge pour l'utilisateur.
+	 *
+	 * @return void rien.
+	 */
+	public function download_attachments() {
+		if ( isset( $_POST['mail_uid'] ) ) {
+			require( 'imapcall.php' );
+			$mail_uid = sanitize_text_field( $_POST['mail_uid'] );
+			if ( isset( $_POST['mail_title'] ) ) {
+				$mail_title = sanitize_text_field( $_POST['mail_title'] );
+			} else {
+				$mail_title = 'no_title';
+			}
+			$mail_id = imap_msgno( $imap, $mail_uid );
+			$structure = imap_fetchstructure( $imap, $mail_id );
+			$attachments = array();
+			if ( isset( $structure->parts ) && count( $structure->parts ) ) {
+				$count_structure_parts = count( $structure->parts );
+				for ( $i = 0; $i < $count_structure_parts ; $i++ ) {
+						$attachments[ $i ] = array(
+										'is_attachment' => false,
+										'filename' => '',
+										'name' => '',
+										'attachment' => '',
+										);
+
+					if ( $structure->parts[ $i ]->ifdparameters ) {
+						foreach ( $structure->parts[ $i ]->dparameters as $object ) {
+							if ( 'filename' === strtolower( $object->attribute ) ) {
+								$attachments[ $i ]['is_attachment'] = true;
+								$attachments[ $i ]['filename'] = $object->value;
+							}
+						}
+					}
+
+					if ( $structure->parts[ $i ]->ifparameters ) {
+						foreach ( $structure->parts[ $i ]->parameters as $object ) {
+							if ( 'name' === strtolower( $object->attribute ) ) {
+								$attachments[ $i ]['is_attachment'] = true;
+								$attachments[ $i ]['name'] = $object->value;
+							}
+						}
+					}
+
+					if ( $attachments[ $i ]['is_attachment'] ) {
+						$attachments[ $i ]['attachment'] = imap_fetchbody( $imap , $mail_id, $i + 1 );
+						if ( 3 === $structure->parts[ $i ]->encoding ) { // 3 = BASE64
+							$attachments[ $i ]['attachment'] = base64_decode( $attachments[ $i ]['attachment'] );
+						}
+						elseif ( 4 === $structure->parts[ $i ]->encoding ) { // 4 = QUOTED-PRINTABLE
+							$attachments[ $i ]['attachment'] = quoted_printable_decode( $attachments[ $i ]['attachment'] );
+						}
+					}
+				} // End for().
+			} // End if().
+			$files = array();
+			$email_upload_dir = wp_upload_dir();
+			$dir = $email_upload_dir['basedir'] . '/Mail_for_task_manager';
+			if ( ! is_dir( $dir ) ) {
+				if ( ! mkdir( $dir, 0777, true ) ) {
+					die( 'Un problème est survenue lors de la creation du dossier' );
+				}
+			}
+			$count = 0;
+			foreach ( $attachments as $key => $attachment ) {
+				$name = $attachment['name'];
+				$contents = $attachment['attachment'];
+				if ( $contents ) {
+					$file_path = $email_upload_dir['basedir'] . '/' . $name;
+					$files[ $count ]['path'] = $file_path;
+					$files[ $count ]['name'] = $name;
+					$ret['file_path'] = $file_path;
+					$boo = file_put_contents( $file_path, $contents );
+					$count++;
+				}
+				if ( $boo ) {
+					$file_url = $email_upload_dir['baseurl'] . '/' . $name;
+					$ret['file_url'] = $file_url;
+				}
+			}
+			$zip = new ZipArchive();
+			$filename = $dir . '/' . $mail_title . '.zip';
+			if ( true !== $zip->open( $filename, ZipArchive::CREATE ) ) {
+				exit( esc_html( "Impossible d'ouvrir le fichier < $filename >n" ) );
+			}
+			foreach ( $files as $file ) {
+				$zip->addFile( $file['path'], $file['name'] );
+			}
+			$zip->close();
+			foreach ( $files as $file ) {
+				unlink( $file['path'] );
+			}
+			$fileurl = $email_upload_dir['baseurl'] . '/Mail_for_task_manager/' . $mail_title . '.zip';
+			echo esc_html( $fileurl );
+			exit();
 		} // End if().
 	}
 }
 
 
+
 new Mail_link_for_wpshop;
+?>

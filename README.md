@@ -10,7 +10,7 @@ Créez vos tâches depuis les emails de vos clients (extension task_manager_wpsh
 	*Réglages Boite mail:
 		*Connéctez-vous à la boite mail où vous allez recevoir les mails que vous pourrez transformer en taches.
 		*Cliquez sur la roue denté en haut à droite de votre boite mail puis sur 'Paramètres'.
-		*Choisissez 'Transport et POP/IMAP' dans le menu en haut de la page.
+		*Choisissez 'Transfert et POP/IMAP' dans le menu en haut de la page.
 		*Dans la rubrique 'Accès IMAP', sélectionné 'Activer IMAP' dans 'Etat'.
 	*Réglages Wordpress
 		*Rendez-vous sur l'interface admin de votre site Wordpress.
@@ -27,7 +27,7 @@ Créez vos tâches depuis les emails de vos clients (extension task_manager_wpsh
 	Chaque e-mail **non-lu** sera afficher sous la forme 'Client' (soit la personne qui vous a envoyé le mail), 'Intitulé' (le titre du mail), 'Demande' (corps du mail).
 	Si l'e-mail contient une ou des images dans le corps du mail ou des pièces jointes, vous serrez averti en dessous de 'Demande' et vous aurez accès à un lien pour vous rendre sur votre boite mail.
 
-	Pour chaque mail vous aurez deux chois :
+	Pour chaque mail traité vous aurez deux choix :
 
 	*Créer la tache ( créera une tache pour le client en question ):
 		*Si l'email de l'expediteur n'est pas enregistré en tant que client, il sera créer.
@@ -39,11 +39,22 @@ Créez vos tâches depuis les emails de vos clients (extension task_manager_wpsh
 		*Marque l'email comme lu.
 
 	Note : si le mail contient une image dans le corps ainsi qu'une pièce jointe ou que le corps du mail contient plus de 5000 charactères il ne pourra pas être traité.
-
+	Pour les mails non-traité vous aurez l'option de cacher l'affichage de ces derniers. Pour qu'ils n'apparaissent plus définitivement il faudra vous rendre sur votre boite mail pour lire ce mail.
 ## Pour Developpeurs
 
 Les données 'E-mail' et 'Mot de passe' qui sont rentré dans le menu d'écriture sont ajouté dans wp_options, le nom de la clé est 'task_info', c'est un tableau qui contient deux paramètres : 'task_mail' et 'task_pass'.
 La fonction pour se connecter sur l'adresse gmail de l'utilisateur est la bibliothèque 'imap' de PHP ( http://php.net/manual/fr/book.imap.php	).
 L'image dans le corps + un piece jointes génère une chaine de charactère de ~30 000 lignes donc on ne le gère pas.
 Les logs ne sont pas encore fait.
-##
+
+# V2 :
+
+## Nouvelles fonctionalités :
+
+*Téléchargement des fichier attachées ( les fichiers seront upload sur le serveur puis télécharger (uploads/Mail_link_task_manager) chez l'utilisateur)
+*Ajout d'un commentaire dans la tache.
+
+# A venir :
+
+*Séléction d'un autre client pour créer la tache.
+*Vider le fichier uploads/Mail_Link_For_Task_Manager.
