@@ -24,7 +24,7 @@ class Mail_Link_For_Wpshop {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'wpb_adding_scripts' ) );
 		add_action( 'admin_init' , array( &$this, 'register_fields' ) );
-		add_action( 'admin_init' , array( &$this, 'callback_ask_task' ) );
+		add_action( 'wp_ajax_ask_task_mail' , array( &$this, 'callback_ask_task' ) );
 		add_action( 'admin_menu', array( &$this, 'add_admin_menu' ) );
 	}
 
@@ -182,10 +182,10 @@ class Mail_Link_For_Wpshop {
 			include( 'imapcall.php' );
 			$array_task = array();
 			$task_man_test = \task_manager\Task_Comment_Class::g()->get_schema();
-			$mail_uid = $_POST['mail_id'];
+			$mail_uid = sanitize_text_field( $_POST['mail_id'] );
 			$mail_id = imap_msgno( $imap, $mail_uid );
 			$task_mail = array();
-			$task_mail['mail_id'] = $_POST['mail_div'];
+			$task_mail['mail_id'] = sanitize_text_field( $_POST['mail_div'] );
 			if ( 'create_task' === $_POST['management_mail'] ) {
 				$header = imap_header( $imap, $mail_id );
 				$from_info = $header->from[0];

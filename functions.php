@@ -21,6 +21,9 @@ function _get_body_attach( $mbox, $mid ) {
 		$attachment = array(); /* Attachments */
 
 		while ( ! $endwhile ) {
+			if ( empty( $parts[ $i ] ) ) {
+				$parts[ $i ] = false;
+			}
 			if ( ! $parts[ $i ] ) {
 				if ( count( $stack ) > 0 ) {
 					$parts = $stack[ count( $stack ) - 1 ]['p'];
@@ -63,7 +66,7 @@ function _get_body_attach( $mbox, $mid ) {
 				}
 			}
 
-			if ( $parts[ $i ]->parts ) {
+			if ( isset( $parts[ $i ]->parts ) ) {
 				if ( 'RELATED' !== $parts[ $i ]->subtype ) {
 					// a glitch: embedded email message have one additional stack in the structure with subtype 'RELATED', but this stack is not present when using imap_fetchbody() to fetch parts.
 					$stack[] = array(
