@@ -1,13 +1,12 @@
 # mail-for-task-manager
 Créez vos tâches depuis les emails de vos clients (extension task_manager_wpshop)
 
-ce que j'ai utilisé. comment sa marche( fonctionnalitées, où tout ce range dans la base [clé, wp_option, etc] )
+# Important : Les plugins Task Manager ainsi que WP shop sont requis pour l'utilisation de ce plugin. #
 
-# Important : Les plugins Task Manager ainsi que WP shop sont requis pour l'utilisation de ce plugin.
+## Ce plugin vous permet de connecter votre boite mail à votre site wordpress pour
+qu'il traite vos mails dans une interface où vous pourrez les transformer en tache. ##
 
-## Ce plugin vous permet de connecter votre boite mail à votre site wordpress pour qu'il traite vos mails dans une interface où vous pourrez les transformer en tache.
-
-## Réglages (Gmail)
+## Réglages (Gmail) ##
 
 	*Réglages Boite mail:
 		*Connéctez-vous à la boite mail où vous allez recevoir les mails que vous pourrez transformer en taches.
@@ -22,7 +21,7 @@ ce que j'ai utilisé. comment sa marche( fonctionnalitées, où tout ce range da
 
 	Pour l'instant l'utilisation de ce plugin ne marche qu'avec une boite gmail.
 
-## Utilisation
+## Utilisation ##
 
 	L'utilisation de ce plugin ce fait directement sur le menu Mail for task manager dans votre bar de droite de la l'interface admin.
 
@@ -42,9 +41,9 @@ ce que j'ai utilisé. comment sa marche( fonctionnalitées, où tout ce range da
 
 	Note : si le mail contient une image dans le corps ainsi qu'une pièce jointe ou que le corps du mail contient plus de 5000 charactères il ne pourra pas être traité.
 
-## Pour Developpeurs
+## Pour Developpeurs ##
 
-Les données 'E-mail' et 'Mot de passe' qui sont rentré dans le menu d'écriture sont ajouté dans wp_options, le nom de la clé est 'task_info', c'est un tableau qui contient deux paramètres : 'task_mail' et 'task_pass'.
-La fonction pour se connecter sur l'adresse gmail de l'utilisateur est la bibliothèque 'imap' de PHP ( http://php.net/manual/fr/book.imap.php	).
-L'image dans le corps + un piece jointes génère une chaine de charactère de ~30 000 lignes donc on ne le gère pas.
-Les logs ne sont pas encore fait.
+*Les données 'E-mail' et 'Mot de passe' qui sont rentré dans le menu d'écriture sont ajouté dans wp_options, le nom de la clé est 'task_info', c'est un tableau qui contient deux paramètres : 'task_mail' et 'task_pass'.
+*La fonction pour se connecter sur l'adresse gmail de l'utilisateur est la bibliothèque 'imap' de PHP ( http://php.net/manual/fr/book.imap.php	).
+*L'image dans le corps + un piece jointes génère une chaine de charactère de ~30 000 lignes donc on ne le gère pas.
+*Les logs ne sont pas encore fait.
