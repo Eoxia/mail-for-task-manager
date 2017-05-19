@@ -5,7 +5,7 @@
   <p>Intitulé : <?php echo esc_html( imap_utf8( $mail_title ) ); ?></p>
   <p><label for="mail_content">Demande :</label><textarea id="mail_content"><?php echo esc_html( imap_utf8( $body_text ) ); ?></textarea></p>
 <?php if ( $count ) { ?>
-		<p> Cette e-mail contient <?php echo esc_html( $count ); ?> image(s) qui ne peuvent pas être affiché, vous ne pourrez pas voir ces images une fois la tache créée.</p>
+		<p> Cette e-mail contient <?php echo esc_html( $count ); ?> image(s) qui ne peuvent pas être affiché, vous ne pourrez pas voir ces images une fois la tache créée. Si vous voulez les consulter avant de créer votre tache rendez-vous : <a href='http://www.gmail.com' target='__blank' >ici</a></p></p>
 <?php }
 if ( ! empty( $mail_test['attachment'] ) ) {?>
 	<!-- Traites les cas ou il y a des attachements. le code en bas n'est qu'un placeholder et ne marche pas. -->
