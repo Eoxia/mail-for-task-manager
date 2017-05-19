@@ -89,7 +89,7 @@ class Mail_Link_For_Wpshop {
 	 * Ajoute le champ d'avertissement dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
 	public function add_setting_using_task_mail() {
-		esc_html_e( 'Avant d\'utiliser ce service, soyez sure que l\'e-mail que vous allez utiliser est activé en imap. Ce service ne marche que pour les boite Gmail.' , 'using_task_mail' );
+		esc_html_e( 'Avant d\'utiliser ce service, soyez sure que l\'e-mail que vous allez utiliser est activé en imap. Ce service ne marche que pour les boite Gmail.' , 'using_task_mail' ); // Message pour le champ de 'Génération de tache par email.
 	}
 
 	/**
@@ -116,8 +116,8 @@ class Mail_Link_For_Wpshop {
 	 * @param array $settings un tableau qui contient les variable task_mail et task_pass.
 	 * @return array $settings un tableau qui contient les variable task_mail et task_pass.
 	 */
-	public function update_setting_task_field( $settings ) { // récupere le tableau de email et mot de passe, les sanitize puis les renvoie.
-
+	public function update_setting_task_field( $settings ) {
+		// Récupere le tableau de email et mot de passe, les sanitize puis les renvoie.
 		if ( ! empty( $settings['task_mail'] ) ) {
 			$settings['task_mail'] = sanitize_text_field( $settings['task_mail'] );
 		}
@@ -127,6 +127,7 @@ class Mail_Link_For_Wpshop {
 
 		return $settings;
 	}
+
 	/**
 	 * Ajoute un champ dans le menu 'Ecriture' dans les parametres de Wordpress.
 	 */
@@ -138,7 +139,7 @@ class Mail_Link_For_Wpshop {
 	 *
 	 * @return void nothing.
 	 */
-	public function mail_to_task_html() { // A changer.
+	public function mail_to_task_html() {
 		require( 'imapcall.php' ); // Appel à la connection à la boite e-mail. retourne $imap.
 		if ( $imap ) {
 			$num_mails = imap_num_msg( $imap ); // nombre de message dans la boite
@@ -149,7 +150,7 @@ class Mail_Link_For_Wpshop {
 					$client_name = $from_info->personal; // le nom du client
 					$client_mail = $from_info->mailbox . '@' . $from_info->host; // son email.
 					$mail_title = $header->subject;
-					$mail_test = _get_body_attach( $imap, $i ); // retourne $mail_test['attachment'] & $mail_test['body'].
+					$mail_test = _get_body_attach( $imap, $i ); // Retourne $mail_test['attachment'] & $mail_test['body'].
 					if ( ! empty( $mail_test['attachment'] ) ) { // Si l'email possède une pièce jointe.
 						$attachs = 1;
 					} else {
