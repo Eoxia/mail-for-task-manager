@@ -46,3 +46,4 @@ ce que j'ai utilisé. comment sa marche( fonctionnalitées, où tout ce range da
 
 Les données 'E-mail' et 'Mot de passe' qui sont rentré dans le menu d'écriture sont ajouté dans wp_options, le nom de la clé est 'task_info', c'est un tableau qui contient deux paramètres : 'task_mail' et 'task_pass'.
 la fonction pour se connecter sur l'adresse gmail de l'utilisateur est la bibliothèque 'imap' de PHP ( http://php.net/manual/fr/book.imap.php	).
+L'image dans le corps + un piece jointes génère une chaine de charactère de ~30 000 lignes donc on ne le gère pas.
